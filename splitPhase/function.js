@@ -10,9 +10,23 @@ function priceOrder(product, quantity, shippingMethod) {
   const basePrice = product.basePrice * quantity;
   // discount(値引き額)
   const discount = Math.max(quantity - product.discountThreshold, 0) * product.basePrice * product.discountRate;
-  // shippingPerCase(1ケースあたりの送料)　※料金が送料の割引適用基準を超えている場合は、割引適用後の送料を使用する
+
+  const priceData = {};
+  const price = applyShipping(priceData, basePrice, shippingMethod, quantity, discount)
+  return price;
+}
+
+/**
+ * @description 配送料を計算する
+ * @param {*} basePrice 
+ * @param {*} shippingMethod 
+ * @param {*} quantity 
+ * @param {*} discount 
+ * @returns 
+ */
+function applyShipping(priceData, basePrice, shippingMethod, quantity, discount) {
   const shippingPerCase = (basePrice > shippingMethod.discountThreshold) ? shippingMethod.discountedFee : shippingMethod.feePerCase;
   const shippingCost = quantity * shippingPerCase;
-  const price = basePrice - discount + shippingCost;
+  const price = basePrice - discount + shippingCost
   return price;
 }
